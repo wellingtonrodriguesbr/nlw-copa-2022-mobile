@@ -1,9 +1,11 @@
 import { Center, Icon, Text } from "native-base";
 import { Button } from "../components/Button";
 import { Fontisto } from "@expo/vector-icons";
+import { useAuth } from "../hooks/useAuth";
 import Logo from "../assets/logo.svg";
 
 export function SignIn() {
+  const { signIn } = useAuth();
   return (
     <Center flex={1} px={6} bg="gray.900">
       <Logo width={212} height={40} />
