@@ -29,12 +29,12 @@ export function FindPool() {
         placement: "bottom",
         bg: "green.500",
       });
-
-      navigate("pools");
+      setTimeout(() => {
+        navigate("pools");
+      }, 1500);
+      setCode("");
     } catch (error) {
       console.log(error);
-      setIsLoading(false);
-
       if (error.response?.data?.message === "Pool not found") {
         return toast.show({
           title: "Bolão não encontrado!",
@@ -56,6 +56,8 @@ export function FindPool() {
         placement: "bottom",
         bg: "red.500",
       });
+    } finally {
+      setIsLoading(false);
     }
   }
 
@@ -77,6 +79,7 @@ export function FindPool() {
           placeholder="Qual o código do bolão"
           mb={2}
           autoCapitalize="characters"
+          value={code}
           onChangeText={setCode}
         />
         <Button
