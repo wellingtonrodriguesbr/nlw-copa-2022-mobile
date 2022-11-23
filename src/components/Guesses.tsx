@@ -1,14 +1,16 @@
-import { Box, FlatList, useToast } from "native-base";
+import { FlatList, useToast } from "native-base";
 import { useEffect, useState } from "react";
 import { api } from "../services/api";
+import { EmptyMyPoolList } from "./EmptyMyPoolList";
 import { Game, GameProps } from "./Game";
 import { Loading } from "./Loading";
 
 interface Props {
   poolId: string;
+  code: string;
 }
 
-export function Guesses({ poolId }: Props) {
+export function Guesses({ poolId, code }: Props) {
   const [isLoading, setIsLoading] = useState(true);
   const [games, setGames] = useState<GameProps[]>([]);
   const [firstTeamPoints, setFirstTeamPoints] = useState("");
@@ -33,6 +35,7 @@ export function Guesses({ poolId }: Props) {
   }
 
   async function handleGuessConfirm(gameId: string) {
+    setIsLoading(true);
     try {
       if (!firstTeamPoints.trim() || !secondTeamPoints.trim()) {
         return toast.show({
@@ -60,6 +63,8 @@ export function Guesses({ poolId }: Props) {
         placement: "bottom",
         bg: "red.500",
       });
+    } finally {
+      setIsLoading(false);
     }
   }
 
@@ -67,26 +72,26 @@ export function Guesses({ poolId }: Props) {
     getGames();
   }, [poolId]);
 
+  if (isLoading) {
+    return <Loading />;
+  }
+
   return (
-    <>
-      {!games.length && isLoading ? (
-        <Loading />
-      ) : (
-        <FlatList
-          data={games}
-          keyExtractor={(item) => item.id}
-          showsVerticalScrollIndicator={false}
-          _contentContainerStyle={{ pb: 10 }}
-          renderItem={({ item }) => (
-            <Game
-              data={item}
-              setFirstTeamPoints={setFirstTeamPoints}
-              setSecondTeamPoints={setSecondTeamPoints}
-              onGuessConfirm={() => handleGuessConfirm(item.id)}
-            />
-          )}
+    <FlatList
+      data={games}
+      keyExtractor={(item) => item.id}
+      showsVerticalScrollIndicator={false}
+      _contentContainerStyle={{ pb: 10 }}
+      ListEmptyComponent={() => <EmptyMyPoolList code={code} />}
+      renderItem={({ item }) => (
+        <Game
+          data={item}
+          isLoading={isLoading}
+          setFirstTeamPoints={setFirstTeamPoints}
+          setSecondTeamPoints={setSecondTeamPoints}
+          onGuessConfirm={() => handleGuessConfirm(item.id)}
         />
       )}
-    </>
+    />
   );
 }

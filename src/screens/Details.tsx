@@ -77,7 +77,7 @@ export function Details() {
               onPress={() => setOptionSelected("Ranking do grupo")}
             />
           </HStack>
-          <Guesses poolId={data.id} />
+          <Guesses poolId={data.id} code={data.code} />
         </VStack>
       ) : (
         <EmptyMyPoolList code={data.code} />
